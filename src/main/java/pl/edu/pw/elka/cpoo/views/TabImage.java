@@ -2,6 +2,7 @@ package pl.edu.pw.elka.cpoo.views;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -13,7 +14,7 @@ import javax.swing.JComponent;
 public class TabImage extends JComponent implements MouseMotionListener, MouseListener,
         MouseWheelListener {
 
-    public static final float ZOOM_VALUE = 0.2f;
+    public static final float ZOOM_SCALE_FACTOR_VALUE = 1.2f;
     public static final float ZOOM_MIN_VALUE = 0.05f;
 
     protected Image image;
@@ -43,16 +44,22 @@ public class TabImage extends JComponent implements MouseMotionListener, MouseLi
         reset();
     }
 
-    public void zoomIn() {
-        scale += ZOOM_VALUE;
+    public void zoomIn(int x, int y) {
+        scale = scale * ZOOM_SCALE_FACTOR_VALUE;
+        xPos = (int) (x - (x - xPos) * ZOOM_SCALE_FACTOR_VALUE);
+        yPos = (int) (y - (y - yPos) * ZOOM_SCALE_FACTOR_VALUE);
+
         repaint();
     }
 
-    public void zoomOut() {
-        scale -= ZOOM_VALUE;
-        if (scale < 0)
-            scale = ZOOM_MIN_VALUE;
-        repaint();
+    public void zoomOut(int x, int y) {
+        if (scale / ZOOM_SCALE_FACTOR_VALUE > 0) {
+            scale = scale / ZOOM_SCALE_FACTOR_VALUE;
+            xPos = (int) (x - (x - xPos) / ZOOM_SCALE_FACTOR_VALUE);
+            yPos = (int) (y - (y - yPos) / ZOOM_SCALE_FACTOR_VALUE);
+
+            repaint();
+        }
     }
 
     public void resetZoom() {
@@ -176,11 +183,12 @@ public class TabImage extends JComponent implements MouseMotionListener, MouseLi
 
     @Override
     public void mouseWheelMoved(final MouseWheelEvent event) {
+        Point p = event.getPoint();
         int notches = event.getWheelRotation();
         if (notches < 0) {
-            zoomIn();
+            zoomIn(p.x, p.y);
         } else {
-            zoomOut();
+            zoomOut(p.x, p.y);
         }
     }
 

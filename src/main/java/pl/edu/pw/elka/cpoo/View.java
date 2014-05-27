@@ -48,29 +48,29 @@ public class View implements KeyListener, ActionListener {
 
         // TODO remove
         createImageTab(
-                getClass().getClassLoader().getResource("unknown/800px-StLouisArchMultExpEV-4.72.JPG")
-                        .getPath(), true);
+                getClass().getClassLoader()
+                        .getResource("unknown/800px-StLouisArchMultExpEV-4.72.JPG").getPath(), true);
         createImageTab(
-                getClass().getClassLoader().getResource("unknown/800px-StLouisArchMultExpEV-1.82.JPG")
-                        .getPath(), true);
+                getClass().getClassLoader()
+                        .getResource("unknown/800px-StLouisArchMultExpEV-1.82.JPG").getPath(), true);
         createImageTab(
-                getClass().getClassLoader().getResource("unknown/800px-StLouisArchMultExpEV+1.51.JPG")
-                        .getPath(), true);
+                getClass().getClassLoader()
+                        .getResource("unknown/800px-StLouisArchMultExpEV+1.51.JPG").getPath(), true);
         createImageTab(
-                getClass().getClassLoader().getResource("unknown/800px-StLouisArchMultExpEV+4.09.JPG")
-                        .getPath(), true);
-//         createImageTab(
-//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-4.72.JPG")
-//         .getPath(), true);
-//         createImageTab(
-//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-1.82.JPG")
-//         .getPath(), true);
-//         createImageTab(
-//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+1.51.JPG")
-//         .getPath(), true);
-//         createImageTab(
-//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+4.09.JPG")
-//         .getPath(), true);
+                getClass().getClassLoader()
+                        .getResource("unknown/800px-StLouisArchMultExpEV+4.09.JPG").getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-4.72.JPG")
+        // .getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-1.82.JPG")
+        // .getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+1.51.JPG")
+        // .getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+4.09.JPG")
+        // .getPath(), true);
     }
 
     private void init() {
@@ -209,10 +209,10 @@ public class View implements KeyListener, ActionListener {
             processAlgorithm(new ToneMappingAlg1());
             break;
         case COMMAND_ZOOM_IN:
-            getCurrentTabImage().zoomIn();
+            getCurrentTabImage().zoomIn(this.mainFrame.getWidth() / 2, mainFrame.getHeight() / 2);
             break;
         case COMMAND_ZOOM_OUT:
-            getCurrentTabImage().zoomOut();
+            getCurrentTabImage().zoomOut(this.mainFrame.getWidth() / 2, mainFrame.getHeight() / 2);
             break;
         case COMMAND_RESET_ZOOM:
             getCurrentTabImage().reset();
