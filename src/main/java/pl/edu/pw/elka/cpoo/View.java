@@ -10,10 +10,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -46,18 +47,30 @@ public class View implements KeyListener, ActionListener {
         init();
 
         // TODO remove
+        // createImageTab(
+        // getClass().getClassLoader()
+        // .getResource("known/StLouisArchMultExpEV-4.72.JPG").getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader()
+        // .getResource("known/StLouisArchMultExpEV-1.82.JPG").getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader()
+        // .getResource("known/StLouisArchMultExpEV+1.51.JPG").getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader()
+        // .getResource("known/StLouisArchMultExpEV+4.09.JPG").getPath(), true);
         createImageTab(
-                getClass().getClassLoader()
-                        .getResource("unknown/800px-StLouisArchMultExpEV-4.72.JPG").getPath(), true);
+                getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-4.72.JPG")
+                        .getPath(), true);
         createImageTab(
-                getClass().getClassLoader()
-                        .getResource("unknown/800px-StLouisArchMultExpEV-1.82.JPG").getPath(), true);
+                getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-1.82.JPG")
+                        .getPath(), true);
         createImageTab(
-                getClass().getClassLoader()
-                        .getResource("unknown/800px-StLouisArchMultExpEV+1.51.JPG").getPath(), true);
+                getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+1.51.JPG")
+                        .getPath(), true);
         createImageTab(
-                getClass().getClassLoader()
-                        .getResource("unknown/800px-StLouisArchMultExpEV+4.09.JPG").getPath(), true);
+                getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+4.09.JPG")
+                        .getPath(), true);
     }
 
     private void init() {
@@ -131,7 +144,14 @@ public class View implements KeyListener, ActionListener {
     }
 
     private void createImageTab(final String path, boolean checkedTab) {
-        createImageTab(new ImageIcon(path).getImage(), new File(path).getName(), checkedTab);
+        // createImageTab(new ImageIcon(path).getImage(), new
+        // File(path).getName(), checkedTab);
+        File pth = new File(path);
+        try {
+            createImageTab(ImageIO.read(pth), pth.getName(), checkedTab);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

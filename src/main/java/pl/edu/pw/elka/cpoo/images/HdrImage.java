@@ -2,7 +2,7 @@ package pl.edu.pw.elka.cpoo.images;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -12,7 +12,7 @@ import pl.edu.pw.elka.cpoo.views.TabHdr;
 public class HdrImage {
 
     private List<MyImage> images;
-    PixelMap hdrDataMap;
+    float[] hdrData;
 
     private int width;
     private int height;
@@ -62,85 +62,66 @@ public class HdrImage {
     }
 
     private void createHdr() {
-        hdrDataMap = new PixelMap(width, height);
+        hdrData = new float[width * height * 3];
 
-        double[][] relevances = new double[width][height];
-        Pixel color;
-        int red, green, blue;
+        double[] relevances = new double[width * height];
+        int color;
+        double red, green, blue;
         boolean isPixelSet;
+        for (int i = 0; i < width * height; i++) {
+            isPixelSet = false;
+            for (MyImage img : images) {
+                // TODO when luminance from image, then strange strips occurs
+                // double relevance = 1 - ((Math.abs(e.getLuminance(i) - 127) +
+                // 0.5) / 127);
+                double relevance = 1;
+                if (relevance > 0.05) {
+                    isPixelSet = true;
+                    color = img.getBufferedImage().getRGB(i % width, i / width);
+                    red = (color & 0x00ff0000) >> 16;
+                    green = (color & 0x0000ff00) >> 8;
+                    blue = color & 0x000000ff;
+                    hdrData[i * 3 + 0] += red * relevance / img.getExposure();
+                    hdrData[i * 3 + 1] += green * relevance / img.getExposure();
+                    hdrData[i * 3 + 2] += blue * relevance / img.getExposure();
 
-        ArrayList<PixelMap> maps = new ArrayList<PixelMap>();
-        for (MyImage e : images) {
-            maps.add(new PixelMap(ImageWrapper.imageToPixelArray(e.getImage())));
-        }
-
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-                isPixelSet = false;
-                int i = 0;
-                for (MyImage img : images) {
-                    double lum = img.getLuminance(y * width + y);
-                    // // lum = maps.get(i).getPixel(x, y).getLuminance();
-                    double relevance = 1;// 1 - ((Math.abs(lum - 127) + 0.5) /
-                                         // 127);
-                    // if (relevance > 0.05) {
-                    // isPixelSet = true;
-                    color = maps.get(i++).getPixel(x, y);
-                    red = color.r;
-                    green = color.g;
-                    blue = color.b;
-
-                    Pixel m = hdrDataMap.getPixel(x, y);
-                    m.r += red * relevance / img.getExposure();
-                    m.g += green * relevance / img.getExposure();
-                    m.b += blue * relevance / img.getExposure();
-
-                    relevances[x][y] += relevance;
-                    // }
+                    relevances[i] += relevance;
                 }
-                // if (!isPixelSet) {
-                // MyImage img = images.get(0);
-                //
-                // color = maps.get(0).getPixel(x, y);
-                // red = color.r;
-                // green = color.g;
-                // blue = color.b;
-                //
-                // Pixel m = map.getPixel(x, y);
-                // m.r += red / img.getExposure();
-                // m.g += green / img.getExposure();
-                // m.b += blue / img.getExposure();
-                //
-                // relevances[x][y] = 1;
-                // }
+            }
+            if (!isPixelSet) {
+                color = images.get(0).getBufferedImage().getRGB(i % width, i / width);
+                red = (color & 0x00ff0000) >> 16;
+                green = (color & 0x0000ff00) >> 8;
+                blue = color & 0x000000ff;
+                hdrData[i * 3 + 0] += red / images.get(0).getExposure();
+                hdrData[i * 3 + 1] += green / images.get(0).getExposure();
+                hdrData[i * 3 + 2] += blue / images.get(0).getExposure();
+                relevances[i] = 1;
             }
         }
-
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-                Pixel m = hdrDataMap.getPixel(x, y);
-                m.r /= relevances[x][y];
-                m.g /= relevances[x][y];
-                m.b /= relevances[x][y];
-            }
+        for (int i = 0; i < width * height; i++) {
+            hdrData[i * 3 + 0] /= relevances[i];
+            hdrData[i * 3 + 1] /= relevances[i];
+            hdrData[i * 3 + 2] /= relevances[i];
         }
 
-        System.out.println("success without exception");
+        System.out.println("done");
     }
 
     public Image getExposedImage(double exposure) {
-        PixelMap pm = new PixelMap(hdrDataMap.getPixels());
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-                Pixel m = pm.getPixel(x, y);
-                m.r = Math.min(255, Math.max(0, (int) (m.r * exposure)));
-                m.g = Math.min(255, Math.max(0, (int) (m.g * exposure)));
-                m.b = Math.min(255, Math.max(0, (int) (m.b * exposure)));
-            }
+        for (int i = 0; i < width * height; i++) {
+            int rgb = 0;
+
+            rgb |= Math.min(255, Math.max(0, (int) (hdrData[i * 3 + 0] * exposure))) << 16;
+            rgb |= Math.min(255, Math.max(0, (int) (hdrData[i * 3 + 1] * exposure))) << 8;
+            rgb |= Math.min(255, Math.max(0, (int) (hdrData[i * 3 + 2] * exposure)));
+
+            image.setRGB(i % width, i / width, rgb);
         }
 
-        return ImageWrapper.pixelArryToImage(pm.getPixels());
+        return image;
     }
 
     public void showRawTool() {
