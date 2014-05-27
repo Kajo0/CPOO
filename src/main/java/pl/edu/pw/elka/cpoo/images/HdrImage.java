@@ -71,10 +71,7 @@ public class HdrImage {
         for (int i = 0; i < width * height; i++) {
             isPixelSet = false;
             for (MyImage img : images) {
-                // TODO when luminance from image, then strange strips occurs
-                // double relevance = 1 - ((Math.abs(e.getLuminance(i) - 127) +
-                // 0.5) / 127);
-                double relevance = 1;
+                double relevance = 1 - ((Math.abs(img.getLuminance(i) - 127) + 0.5) / 127);
                 if (relevance > 0.05) {
                     isPixelSet = true;
                     color = img.getBufferedImage().getRGB(i % width, i / width);
@@ -89,13 +86,14 @@ public class HdrImage {
                 }
             }
             if (!isPixelSet) {
-                color = images.get(0).getBufferedImage().getRGB(i % width, i / width);
+                MyImage img = images.get(images.size() / 2);
+                color = img.getBufferedImage().getRGB(i % width, i / width);
                 red = (color & 0x00ff0000) >> 16;
                 green = (color & 0x0000ff00) >> 8;
                 blue = color & 0x000000ff;
-                hdrData[i * 3 + 0] += red / images.get(0).getExposure();
-                hdrData[i * 3 + 1] += green / images.get(0).getExposure();
-                hdrData[i * 3 + 2] += blue / images.get(0).getExposure();
+                hdrData[i * 3 + 0] += red / img.getExposure();
+                hdrData[i * 3 + 1] += green / img.getExposure();
+                hdrData[i * 3 + 2] += blue / img.getExposure();
                 relevances[i] = 1;
             }
         }

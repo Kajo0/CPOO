@@ -5,6 +5,8 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 
+import javax.imageio.ImageIO;
+
 public class MyImage {
 
     private Image image;
@@ -21,7 +23,7 @@ public class MyImage {
         width = image.getWidth(null);
         height = image.getHeight(null);
 
-        bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().drawImage(image, 0, 0, null);
 
         initializeLuminances();
