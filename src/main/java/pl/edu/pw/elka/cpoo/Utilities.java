@@ -9,7 +9,7 @@ import java.awt.image.PixelGrabber;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import pl.edu.pw.elka.cpoo.algorithms.Pixel;
+import pl.edu.pw.elka.cpoo.images.Pixel;
 
 /**
  * Static class mostly with filters and creating image from array of pixels\

@@ -1,20 +1,34 @@
 package pl.edu.pw.elka.cpoo.algorithms;
 
 import java.awt.Image;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
+import java.util.List;
 
-import pl.edu.pw.elka.cpoo.Utilities;
+import pl.edu.pw.elka.cpoo.images.HdrImage;
+import pl.edu.pw.elka.cpoo.images.ImageWrapper;
+import pl.edu.pw.elka.cpoo.images.MyImage;
 import pl.edu.pw.elka.cpoo.interfaces.HdrProcessor;
 
 public class ToneMappingAlg1 implements HdrProcessor {
 
+    private HdrImage hdrImage;
+
     @Override
     public Image process(final ImageWrapper imageWrapper) {
-        Image img = imageWrapper.getImage(new Random().nextInt(imageWrapper.getImages().size()));
-        Pixel[][] pixels = Utilities.createPixelArrayFromImage(img);
+        List<MyImage> images = new ArrayList<MyImage>();
+        for (Image img : imageWrapper.getImages()) {
+            images.add(new MyImage(img));
+        }
 
-        return Utilities.createImageFromPixels(Utilities.rankinkgFilterPixels(pixels, 5, 9));
+        hdrImage = new HdrImage(images);
+        hdrImage.process();
+
+        hdrImage.showRawTool();
+
+        // TODO tone mapping
+
+        return hdrImage.getExposedImage(1);
     }
 
     @Override

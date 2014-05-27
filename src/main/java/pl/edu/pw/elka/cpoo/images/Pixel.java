@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.cpoo.algorithms;
+package pl.edu.pw.elka.cpoo.images;
 
 /**
  * Class representing pixel entity with RGB components
@@ -72,6 +72,16 @@ public class Pixel implements Comparable<Pixel> {
      */
     public int grayValue() {
         return (r + g + b) / 3;
+    }
+
+    /**
+     * Compute luminance for pixel
+     * 
+     * @return Pixel luminance value
+     */
+    public double getLuminance() {
+        return 0.299 * r + 0.587 * g + 0.114 * b;
+        // return (r * 0.3) + (g * 0.59) + (b * 0.11);
     }
 
     /**

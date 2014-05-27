@@ -19,9 +19,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import pl.edu.pw.elka.cpoo.algorithms.ImageWrapper;
-import pl.edu.pw.elka.cpoo.algorithms.Pixel;
 import pl.edu.pw.elka.cpoo.algorithms.ToneMappingAlg1;
+import pl.edu.pw.elka.cpoo.images.ImageWrapper;
 import pl.edu.pw.elka.cpoo.interfaces.HdrProcessor;
 import pl.edu.pw.elka.cpoo.views.ButtonTabComponent;
 import pl.edu.pw.elka.cpoo.views.FileDrop;
@@ -45,6 +44,20 @@ public class View implements KeyListener, ActionListener {
         tabPane = new JTabbedPane();
 
         init();
+
+        // TODO remove
+        createImageTab(
+                getClass().getClassLoader()
+                        .getResource("unknown/800px-StLouisArchMultExpEV-4.72.JPG").getPath(), true);
+        createImageTab(
+                getClass().getClassLoader()
+                        .getResource("unknown/800px-StLouisArchMultExpEV-1.82.JPG").getPath(), true);
+        createImageTab(
+                getClass().getClassLoader()
+                        .getResource("unknown/800px-StLouisArchMultExpEV+1.51.JPG").getPath(), true);
+        createImageTab(
+                getClass().getClassLoader()
+                        .getResource("unknown/800px-StLouisArchMultExpEV+4.09.JPG").getPath(), true);
     }
 
     private void init() {
@@ -75,7 +88,7 @@ public class View implements KeyListener, ActionListener {
                     if (file.isDirectory())
                         continue;
 
-                    createImageTab(file.getAbsolutePath());
+                    createImageTab(file.getAbsolutePath(), true);
                 }
             }
         });
@@ -95,43 +108,6 @@ public class View implements KeyListener, ActionListener {
         addButtonToPanel("Zoom in", COMMAND_ZOOM_IN, this);
         addButtonToPanel("Zoom out", COMMAND_ZOOM_OUT, this);
         addButtonToPanel("Reset zoom", COMMAND_RESET_ZOOM, this);
-
-        addButtonToPanel("Invert", "", new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                Image img = getCurrentImage();
-                if (img == null)
-                    return;
-                Pixel[][] pixels = Utilities.createPixelArrayFromImage(img);
-                img = Utilities.createImageFromPixels(Utilities.invertPixels(pixels));
-                createImageTab(img, "Invert");
-            }
-        });
-        addButtonToPanel("Sharp", "", new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                Image img = getCurrentImage();
-                if (img == null)
-                    return;
-                Pixel[][] pixels = Utilities.createPixelArrayFromImage(img);
-                img = Utilities.createImageFromPixels(Utilities.unsharpPixels(pixels, 4.5f, 3, 5));
-                createImageTab(img, "Sharp");
-            }
-        });
-        addButtonToPanel("Blur", "", new ActionListener() {
-
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                Image img = getCurrentImage();
-                if (img == null)
-                    return;
-                Pixel[][] pixels = Utilities.createPixelArrayFromImage(img);
-                img = Utilities.createImageFromPixels(Utilities.blurPixels(pixels));
-                createImageTab(img, "Blur");
-            }
-        });
     }
 
     protected JButton addButtonToPanel(final String label, final String command,
@@ -145,15 +121,17 @@ public class View implements KeyListener, ActionListener {
         return button;
     }
 
-    private void createImageTab(final Image img, final String name) {
+    private void createImageTab(final Image img, final String name, boolean checkedTab) {
         tabPane.addTab(name, new TabImage(img));
         int tabIndex = tabPane.getTabCount() - 1;
-        tabPane.setTabComponentAt(tabIndex, new ButtonTabComponent(tabPane));
+        ButtonTabComponent tabButton = new ButtonTabComponent(tabPane);
+        tabButton.setChecked(checkedTab);
+        tabPane.setTabComponentAt(tabIndex, tabButton);
         tabPane.setSelectedIndex(tabIndex);
     }
 
-    private void createImageTab(final String path) {
-        createImageTab(new ImageIcon(path).getImage(), new File(path).getName());
+    private void createImageTab(final String path, boolean checkedTab) {
+        createImageTab(new ImageIcon(path).getImage(), new File(path).getName(), checkedTab);
     }
 
     @Override
@@ -239,7 +217,7 @@ public class View implements KeyListener, ActionListener {
                 List<Image> images = getSelectedImages();
                 if (images.isEmpty() == false) {
                     Image img = processor.process(new ImageWrapper(images));
-                    createImageTab(img, processor.getName());
+                    createImageTab(img, processor.getName(), false);
                 }
 
                 alg1Button.setEnabled(true);

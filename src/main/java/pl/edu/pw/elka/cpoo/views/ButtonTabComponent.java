@@ -36,6 +36,8 @@ public class ButtonTabComponent extends JPanel {
 
         checkBox = new JCheckBox();
         checkBox.setOpaque(false);
+        // TODO remove
+        checkBox.setSelected(true);
         add(checkBox);
 
         JLabel label = new JLabel() {
@@ -133,6 +135,10 @@ public class ButtonTabComponent extends JPanel {
 
     public boolean isChecked() {
         return checkBox.isSelected();
+    }
+
+    public void setChecked(boolean checkedTab) {
+        checkBox.setSelected(checkedTab);
     }
 
 }

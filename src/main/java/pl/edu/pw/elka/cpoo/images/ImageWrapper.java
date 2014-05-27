@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.cpoo.algorithms;
+package pl.edu.pw.elka.cpoo.images;
 
 import java.awt.Image;
 import java.util.ArrayList;
