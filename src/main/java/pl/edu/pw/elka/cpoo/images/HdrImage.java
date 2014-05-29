@@ -130,4 +130,15 @@ public class HdrImage {
         a.setVisible(true);
     }
 
+    public float[] getHdrData() {
+        return hdrData;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }
