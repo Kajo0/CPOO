@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -144,14 +145,13 @@ public class View implements KeyListener, ActionListener {
     }
 
     private void createImageTab(final String path, boolean checkedTab) {
-        // createImageTab(new ImageIcon(path).getImage(), new
-        // File(path).getName(), checkedTab);
-        File pth = new File(path);
-        try {
-            createImageTab(ImageIO.read(pth), pth.getName(), checkedTab);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        createImageTab(new ImageIcon(path).getImage(), new File(path).getName(), checkedTab);
+        // File pth = new File(path);
+        // try {
+        // createImageTab(ImageIO.read(pth), pth.getName(), checkedTab);
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // }
     }
 
     @Override
