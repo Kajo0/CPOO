@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import pl.edu.pw.elka.cpoo.algorithms.Debevec;
 import pl.edu.pw.elka.cpoo.algorithms.ImageWrapper;
 import pl.edu.pw.elka.cpoo.algorithms.Pixel;
 import pl.edu.pw.elka.cpoo.algorithms.ToneMappingAlg1;
@@ -91,7 +92,7 @@ public class View implements KeyListener, ActionListener {
     }
 
     private void initButtons() {
-        alg1Button = addButtonToPanel("Tone Mapping v1", COMMAND_ALG_1, this);
+        alg1Button = addButtonToPanel("HDR", COMMAND_ALG_1, this);
         addButtonToPanel("Zoom in", COMMAND_ZOOM_IN, this);
         addButtonToPanel("Zoom out", COMMAND_ZOOM_OUT, this);
         addButtonToPanel("Reset zoom", COMMAND_RESET_ZOOM, this);
@@ -208,7 +209,7 @@ public class View implements KeyListener, ActionListener {
     public void actionPerformed(final ActionEvent event) {
         switch (event.getActionCommand()) {
         case COMMAND_ALG_1:
-            processAlgorithm(new ToneMappingAlg1());
+            processAlgorithm(new Debevec());
             break;
         case COMMAND_ZOOM_IN:
             getCurrentTabImage().zoomIn();
