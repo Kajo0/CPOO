@@ -78,6 +78,10 @@ public class TabImage extends JComponent implements MouseMotionListener, MouseLi
 
     public void setImage(final Image image) {
         this.image = image;
+
+        imgWidth = image.getWidth(null);
+        imgHeight = image.getHeight(null);
+
         repaint();
         // reset();
     }
