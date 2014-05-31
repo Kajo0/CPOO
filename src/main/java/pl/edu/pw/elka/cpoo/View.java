@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import pl.edu.pw.elka.cpoo.algorithms.ToneMappingAlg1;
+import pl.edu.pw.elka.cpoo.algorithms.ToneMappingAlg2;
 import pl.edu.pw.elka.cpoo.images.ImageWrapper;
 import pl.edu.pw.elka.cpoo.interfaces.HdrProcessor;
 import pl.edu.pw.elka.cpoo.views.ButtonTabComponent;
@@ -31,6 +32,7 @@ import pl.edu.pw.elka.cpoo.views.TabImage;
 public class View implements KeyListener, ActionListener {
 
     private static final String COMMAND_ALG_1 = "alg1";
+    private static final String COMMAND_ALG_2 = "alg2";
     private static final String COMMAND_ZOOM_IN = "zoom_in";
     private static final String COMMAND_ZOOM_OUT = "zoom_out";
     private static final String COMMAND_RESET_ZOOM = "reset_zoom";
@@ -39,6 +41,7 @@ public class View implements KeyListener, ActionListener {
     private JPanel barPanel;
     private JTabbedPane tabPane;
     private JButton alg1Button;
+    private JButton alg2Button;
 
     public View() {
         mainFrame = new JFrame("CPOO, HDR");
@@ -119,6 +122,7 @@ public class View implements KeyListener, ActionListener {
 
     private void initButtons() {
         alg1Button = addButtonToPanel("Tone Mapping v1", COMMAND_ALG_1, this);
+        alg2Button = addButtonToPanel("Tone Mapping v2", COMMAND_ALG_2, this);
         addButtonToPanel("Zoom in", COMMAND_ZOOM_IN, this);
         addButtonToPanel("Zoom out", COMMAND_ZOOM_OUT, this);
         addButtonToPanel("Reset zoom", COMMAND_RESET_ZOOM, this);
@@ -207,6 +211,9 @@ public class View implements KeyListener, ActionListener {
         switch (event.getActionCommand()) {
         case COMMAND_ALG_1:
             processAlgorithm(new ToneMappingAlg1());
+            break;
+        case COMMAND_ALG_2:
+            processAlgorithm(new ToneMappingAlg2());
             break;
         case COMMAND_ZOOM_IN:
             getCurrentTabImage().zoomIn(this.mainFrame.getWidth() / 2, mainFrame.getHeight() / 2);
