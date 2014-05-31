@@ -44,7 +44,8 @@ public class ToneMappingAlg1 implements HdrProcessor {
     }
 
     /**
-     * pierwszy algorytm do tonal mappingu, z wykorzystaniem operator Reinharda
+     * pierwszy algorytm do tonal mappingu, zaproponowany przez Reinharda
+     * Ÿród³o: TODO
      * 
      * @param hdrImage
      *            obraz HDR
@@ -56,89 +57,86 @@ public class ToneMappingAlg1 implements HdrProcessor {
         // https://github.com/krisher/Path-Tracer/blob/master/src/main/java/edu/rit/krisher/raytracer/image/ImageUtil.java
         // lekko przerobiona - TODO zrobiæ porz¹dek z komentarzami i ogarn¹æ
         
+        // dane hdr
         float[] rgb = hdrImage.getHdrData();
         
-        /*
-         * Convert to Yxy color space (lum/chrom based on CIE XYZ), and compute
-         * the log average of the luminance values.
-         */
         double logAvg = 0;
         double maxLum = 0;
-        for (int pix = 0; pix < rgb.length; pix += 3) {
+        float avgLum = 0;
+
+        // konwersja obrazu hdr do Yxy i wyliczenie maksymalnej, sredniej oraz
+        // œredniej logaryticznej wartoœci luminancji
+        for (int pix = 0; pix < rgb.length; pix += 3)
+        {
+           double gray = 0.21*rgb[pix]+0.71*rgb[pix+1]+0.07*rgb[pix+2];
+           avgLum += gray;
+           
            final double y = RGB2XYZ[3] * rgb[pix] + RGB2XYZ[4] * rgb[pix + 1] + RGB2XYZ[5] * rgb[pix + 2];
            logAvg += Math.log(1e-4 + y);
            if (y > maxLum)
               maxLum = y;
         }
         logAvg = Math.exp(logAvg / (rgb.length / 3.0));
+        avgLum = (avgLum / (rgb.length / 3)) / 255;
 
-        /*
-         * Use 18% gray as a default midpoint value.
-         */
-        Double midPoint = 0.18;
-        /*
-         * Scale luminance values based on specified mid-tone, and normalize
-         * between 0 and 1.
-         * 
-         * Also convert back to RGB.
-         */
+        // srednia luminancja w obrazie - jesli obliczenie wychodza poza zakres
+        // (10%;90%) wtedy wartosc domyslna 18%
+        if (avgLum < 0.1 || avgLum > 0.9)
+            avgLum = 0.18f;
 
-        final double scale = midPoint / logAvg;
+        final double scale = avgLum / logAvg;
 
         return scaleLum(scale, rgb, maxLum, hdrImage.getWidth(), hdrImage.getHeight());
     }
 
     /**
-     * Scales the specified rgb values' luminance by the specified factor.
+     * skaluje wartosci luminancji wg odpowiedniego wspolczynnika (Reinharda)
      * 
      * @param scale
-     *            The scale factor.
+     *            wspolczynnik skali
      * @param rgb
-     *            Array of input RGB values.
-     * @param rgbOut
-     *            Array of output RGB values.
+     *            tablica wartoœci obrazu hdr w RGB
      * @param whiteLum
-     *            Maximum (unscaled) luminance value. Any values >= this value
-     *            will be mapped to a luminance of 1. May be 0, in which case
-     *            max luminance is assumed to be infinite.
-     * @param height 
-     * @param width 
+     *            maksymalna wartosc luminancji w obrazie.
+     * @param height
+     *            wysokosc obrazy
+     * @param width
+     *            szerokosc obrazu
+     * @return Image obraz po przeskalowaniu i konwersji do RGB
      */
     private static final Image scaleLum(final double scale, final float[] rgb,
             final double whiteLum, int width, int height)
     {
+        // pusty obraz wynikowy o odpowiednim rozmiarze
         BufferedImage retImg = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
 
+        // kolor bialy zeskalowany
         final double whiteSq = whiteLum * scale * whiteLum * scale;
+        
+        // konwersja do Yxy i skalowanie
         for (int pix = 0; pix < rgb.length; pix += 3)
         {
-            double Y = RGB2XYZ[3] * rgb[pix] + RGB2XYZ[4] * rgb[pix + 1]
-                    + RGB2XYZ[5] * rgb[pix + 2];
+            double Y = RGB2XYZ[3] * rgb[pix] + RGB2XYZ[4] * rgb[pix + 1] + RGB2XYZ[5] * rgb[pix + 2];
             if (Y > 0)
             {
-                double x = RGB2XYZ[0] * rgb[pix] + RGB2XYZ[1] * rgb[pix + 1]
-                        + RGB2XYZ[2] * rgb[pix + 2];
-                double z = RGB2XYZ[6] * rgb[pix] + RGB2XYZ[7] * rgb[pix + 1]
-                        + RGB2XYZ[8] * rgb[pix + 2];
+                double x = RGB2XYZ[0] * rgb[pix] + RGB2XYZ[1] * rgb[pix + 1] + RGB2XYZ[2] * rgb[pix + 2];
+                double z = RGB2XYZ[6] * rgb[pix] + RGB2XYZ[7] * rgb[pix + 1] + RGB2XYZ[8] * rgb[pix + 2];
 
                 final double sum = Y + x + z;
                 x = (float) (x / sum);
                 final double y = (float) (Y / sum);
 
+                // skalowanie
                 Y *= scale;
-                /*
-                 * From Reinhard paper, the Y/maxLum^2 term allows specification
-                 * of which luminance value corresponds to white, which can be
-                 * used to give a greater range to lower values, at the expense
-                 * of any value > maxLum being clamped to white.
-                 */
+
+                // zastosowanie wspolczynnika Reinharda. Jesli wartosc
+                // przeskalowana jest wieksza niz kolor bialy, jest mu
+                // przypisywany bialy
                 if (whiteSq > 0)
                     Y *= (1.0 + (Y / whiteSq)) / (1.0 + Y);
                 else
                     Y *= 1.0 / (1.0 + Y);
-                /*
-                 * Convert from Yxy to CIE XYZ
-                 */
+                // konwersja z Yxy do CIE XYZ
                 if (y > 0.0 && x > 0.0 && y > 0.0)
                 {
                     x *= Y / y;
@@ -149,18 +147,10 @@ public class ToneMappingAlg1 implements HdrProcessor {
                     x = z = 0.0;
                 }
 
-                /*
-                 * Convert back to RGB, clamping at 1.0. Note that since we are
-                 * doing the scaling in the luminance channel, it is possible
-                 * that some r, g, b values will be clamped because the desired
-                 * luminance can not be achieved.
-                 */
-                final float r = (float) Math.min(1.0, (XYZ2RGB[0] * x
-                        + XYZ2RGB[1] * Y + XYZ2RGB[2] * z));
-                final float g = (float) Math.min(1.0, (XYZ2RGB[3] * x
-                        + XYZ2RGB[4] * Y + XYZ2RGB[5] * z));
-                final float b = (float) Math.min(1.0, (XYZ2RGB[6] * x
-                        + XYZ2RGB[7] * Y + XYZ2RGB[8] * z));
+                // konwersja z powrotem do RGB
+                final float r = (float) Math.min(1.0, (XYZ2RGB[0] * x + XYZ2RGB[1] * Y + XYZ2RGB[2] * z));
+                final float g = (float) Math.min(1.0, (XYZ2RGB[3] * x + XYZ2RGB[4] * Y + XYZ2RGB[5] * z));
+                final float b = (float) Math.min(1.0, (XYZ2RGB[6] * x + XYZ2RGB[7] * Y + XYZ2RGB[8] * z));
 
                 int rgbValue = 0;
 
@@ -168,8 +158,8 @@ public class ToneMappingAlg1 implements HdrProcessor {
                 rgbValue |= Math.min(255, Math.max(0, (int) (g * 255.0))) << 8;
                 rgbValue |= Math.min(255, Math.max(0, (int) (b * 255.0)));
 
+                // zapisanie do obrazu wynikowego
                 retImg.setRGB((pix / 3) % width, (pix / 3) / width, rgbValue);
-
             }
             else
             {
