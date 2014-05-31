@@ -53,7 +53,7 @@ public class MyImage {
         BufferedImage imageLum = grayScaleOp.filter(bufferedImage, null);
         int[] lum = imageLum.getData().getPixels(0, 0, width, height, (int[]) null);
 
-        luminances = new int[lum.length / 4];
+        luminances = new int[lum.length / 4 + 1];
         for (int i = 0; i < lum.length; i++) {
             luminances[i / 4] <<= 8;
             luminances[i / 4] |= lum[i];
