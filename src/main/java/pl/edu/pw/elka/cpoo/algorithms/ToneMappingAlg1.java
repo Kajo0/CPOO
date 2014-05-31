@@ -45,7 +45,7 @@ public class ToneMappingAlg1 implements HdrProcessor {
 
     /**
      * pierwszy algorytm do tonal mappingu, zaproponowany przez Reinharda
-     * Ÿród³o: TODO
+     * zrodlo: Ferwerda J, Reinhard E, Shirley P, Stark M 'Photographic Tone Reproduction for Digital Images'
      * 
      * @param hdrImage
      *            obraz HDR
@@ -53,10 +53,6 @@ public class ToneMappingAlg1 implements HdrProcessor {
      */
     private Image doTonalMappingAlg1(HdrImage hdrImage) {
 
-        // TODO implementacja z githuba:
-        // https://github.com/krisher/Path-Tracer/blob/master/src/main/java/edu/rit/krisher/raytracer/image/ImageUtil.java
-        // lekko przerobiona - TODO zrobiæ porz¹dek z komentarzami i ogarn¹æ
-        
         // dane hdr
         float[] rgb = hdrImage.getHdrData();
         
