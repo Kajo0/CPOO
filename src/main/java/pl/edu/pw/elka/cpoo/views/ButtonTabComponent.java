@@ -36,7 +36,6 @@ public class ButtonTabComponent extends JPanel {
 
         checkBox = new JCheckBox();
         checkBox.setOpaque(false);
-        // TODO remove
         checkBox.setSelected(true);
         add(checkBox);
 
