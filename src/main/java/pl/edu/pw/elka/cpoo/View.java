@@ -70,18 +70,18 @@ public class View implements KeyListener, ActionListener {
         createImageTab(
                 getClass().getClassLoader()
                         .getResource("unknown/800px-StLouisArchMultExpEV+4.09.JPG").getPath(), true);
-//         createImageTab(
-//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-4.72.JPG")
-//         .getPath(), true);
-//         createImageTab(
-//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-1.82.JPG")
-//         .getPath(), true);
-//         createImageTab(
-//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+1.51.JPG")
-//         .getPath(), true);
-//         createImageTab(
-//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+4.09.JPG")
-//         .getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-4.72.JPG")
+        // .getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-1.82.JPG")
+        // .getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+1.51.JPG")
+        // .getPath(), true);
+        // createImageTab(
+        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+4.09.JPG")
+        // .getPath(), true);
     }
 
     private void init() {
@@ -177,6 +177,38 @@ public class View implements KeyListener, ActionListener {
         switch (event.getKeyCode()) {
         case KeyEvent.VK_ESCAPE:
             mainFrame.dispose();
+        case KeyEvent.VK_LEFT: {
+            if (tabPane.getTabCount() == 0) {
+                return;
+            }
+            int index = tabPane.getSelectedIndex();
+            index -= 1;
+            if (index < 0) {
+                index = tabPane.getTabCount() - 1;
+            }
+            index %= tabPane.getTabCount();
+            tabPane.setSelectedIndex(index);
+        }
+            break;
+        case KeyEvent.VK_RIGHT: {
+            if (tabPane.getTabCount() == 0) {
+                return;
+            }
+            int index = tabPane.getSelectedIndex();
+            index += 1;
+            index %= tabPane.getTabCount();
+            tabPane.setSelectedIndex(index);
+        }
+            break;
+        case KeyEvent.VK_DELETE:
+            if (tabPane.getTabCount() == 0) {
+                return;
+            }
+            tabPane.remove(tabPane.getSelectedIndex());
+            break;
+        case KeyEvent.VK_R:
+            getCurrentTabImage().reset();
+            break;
 
         default:
             // ignore
@@ -239,6 +271,7 @@ public class View implements KeyListener, ActionListener {
             // ignore
             break;
         }
+        mainFrame.requestFocus();
     }
 
     protected void processAlgorithm(final HdrProcessor processor) {
