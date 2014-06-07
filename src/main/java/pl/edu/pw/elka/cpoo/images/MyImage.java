@@ -5,9 +5,15 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 
-import javax.imageio.ImageIO;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+
+import org.w3c.dom.NodeList;
+
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 public class MyImage {
+	private static String JPEGMetaFormat = "javax_imageio_jpeg_image_1.0";
 
     private Image image;
     private BufferedImage bufferedImage;
@@ -17,6 +23,8 @@ public class MyImage {
 
     private int width;
     private int height;
+
+	private ExifSubIFDDirectory exif;
 
     public MyImage(Image image) {
         this.image = image;
@@ -34,7 +42,12 @@ public class MyImage {
         this.exposure = exposure;
     }
 
-    private void initializeLuminances() {
+    public MyImage(Image img, ExifSubIFDDirectory exif) {
+    	this(img);
+		this.exif = exif;
+	}
+
+	private void initializeLuminances() {
         ColorConvertOp grayScaleOp = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY),
                 null);
         BufferedImage imageLum = grayScaleOp.filter(bufferedImage, null);
@@ -77,5 +90,13 @@ public class MyImage {
     public int getHeight() {
         return height;
     }
+
+	public ExifSubIFDDirectory getExif() {
+		return exif;
+	}
+
+	public void setExif(ExifSubIFDDirectory exif) {
+		this.exif = exif;
+	}
 
 }

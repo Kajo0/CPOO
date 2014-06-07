@@ -610,5 +610,10 @@ public class Utilities {
 
         return pixels;
     }
+    
+    public static float log2(float n)
+    {
+        return (float) (Math.log(n) / Math.log(2));
+    }
 
 }

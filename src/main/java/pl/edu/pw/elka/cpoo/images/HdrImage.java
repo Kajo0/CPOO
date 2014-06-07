@@ -7,6 +7,10 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+
+import pl.edu.pw.elka.cpoo.Utilities;
 import pl.edu.pw.elka.cpoo.views.TabHdr;
 
 public class HdrImage {
@@ -39,23 +43,84 @@ public class HdrImage {
         // stronki
         try {
             // From tool
-            if (true) {
+            if (!allImagesHasExif(images)) {
                 images.get(0).setExposure(0.29259689966586955);
                 images.get(1).setExposure(0.8081045891269992);
                 images.get(2).setExposure(1.0);
                 images.get(3).setExposure(6.411333121849957);
+                calculateExposureBasedOnImageAverageLuminance();
+                
             }
             // Real
             else {
-                images.get(0).setExposure(-4.72);
-                images.get(1).setExposure(-1.82);
-                images.get(2).setExposure(1.51);
-                images.get(3).setExposure(4.09);
+                for(MyImage image : images) 
+                	image.setExposure(calculateExposureFromExif(image.getExif()) + 9.0f);
+                
+                scaleExposure();
+                
             }
         } catch (IndexOutOfBoundsException e) {
             // ignore test
         }
     }
+    
+    private void calculateExposureBasedOnImageAverageLuminance() {
+    	float[] avgLuminances = new float[images.size()];
+    	float minimalLuminance = Float.MAX_VALUE;
+    	
+    	for(int i = 0 ; i < images.size(); ++i) {
+    		avgLuminances[i] = calculateAverageLuminance(images.get(i));
+    		minimalLuminance = Math.min(minimalLuminance, avgLuminances[i]);
+    	}
+    	
+    	for(float luminance : avgLuminances) {
+    		System.out.println("" + Utilities.log2(luminance/minimalLuminance));
+    	}
+    	
+	}
+
+	private void scaleExposure() {
+    	float minExp = Float.MAX_VALUE;
+    	for(MyImage img : images) 
+    		minExp = (float) Math.min(img.getExposure(), minExp);
+    	for(MyImage img : images)
+    		img.setExposure(img.getExposure() + Math.abs(minExp) + 1);
+	}
+
+	private float calculateExposureFromExif(ExifSubIFDDirectory exif) {
+		try {
+			float fNumber = exif.getFloat(ExifSubIFDDirectory.TAG_FNUMBER);
+			float exposureTime = exif.getFloat(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
+			return Utilities.log2(exposureTime/(float) Math.pow(fNumber, 2.0));
+		} catch (MetadataException e) {
+		}
+		//protect before divinding by 0
+		return 0.01f;
+    }
+    
+    private boolean allImagesHasExif(List<MyImage> images) {
+    	if(images == null) 
+    		return false;
+    	
+    	for(MyImage image : images) {
+    		if(image.getExif() == null)
+    			return false;
+    	}
+    	return true;
+    }
+    
+    
+    private float calculateAverageLuminance(MyImage image) {
+        float avLum = 0.0f;
+        int size = image.getWidth() * image.getHeight();
+        
+        for (int i = 0; i < size; i++) {
+            avLum += Math.log(image.getLuminance(i) + 1e-4);
+        }
+        avLum = (float) Math.exp(avLum / size);
+        return avLum;
+    }
+
 
     public void process() {
         createHdr();

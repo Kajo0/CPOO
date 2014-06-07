@@ -12,9 +12,10 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,6 +30,15 @@ import pl.edu.pw.elka.cpoo.views.ButtonTabComponent;
 import pl.edu.pw.elka.cpoo.views.FileDrop;
 import pl.edu.pw.elka.cpoo.views.TabImage;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifSubIFDDescriptor;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+
 public class View implements KeyListener, ActionListener {
 
     private static final String COMMAND_ALG_1 = "alg1";
@@ -42,6 +52,7 @@ public class View implements KeyListener, ActionListener {
     private JTabbedPane tabPane;
     private JButton alg1Button;
     private JButton alg2Button;
+    private Map<Image, ExifSubIFDDirectory> imageToExifMap = new HashMap<>();
 
     public View() {
         mainFrame = new JFrame("CPOO, HDR");
@@ -63,18 +74,18 @@ public class View implements KeyListener, ActionListener {
         createImageTab(
                 getClass().getClassLoader()
                         .getResource("unknown/800px-StLouisArchMultExpEV+4.09.JPG").getPath(), true);
-        // createImageTab(
-        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-4.72.JPG")
-        // .getPath(), true);
-        // createImageTab(
-        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-1.82.JPG")
-        // .getPath(), true);
-        // createImageTab(
-        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+1.51.JPG")
-        // .getPath(), true);
-        // createImageTab(
-        // getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+4.09.JPG")
-        // .getPath(), true);
+//         createImageTab(
+//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-4.72.JPG")
+//         .getPath(), true);
+//         createImageTab(
+//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV-1.82.JPG")
+//         .getPath(), true);
+//         createImageTab(
+//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+1.51.JPG")
+//         .getPath(), true);
+//         createImageTab(
+//         getClass().getClassLoader().getResource("known/StLouisArchMultExpEV+4.09.JPG")
+//         .getPath(), true);
     }
 
     private void init() {
@@ -146,16 +157,22 @@ public class View implements KeyListener, ActionListener {
         tabButton.setChecked(checkedTab);
         tabPane.setTabComponentAt(tabIndex, tabButton);
         tabPane.setSelectedIndex(tabIndex);
+        
     }
 
     private void createImageTab(final String path, boolean checkedTab) {
-        createImageTab(new ImageIcon(path).getImage(), new File(path).getName(), checkedTab);
-        // File pth = new File(path);
-        // try {
-        // createImageTab(ImageIO.read(pth), pth.getName(), checkedTab);
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
+   
+     	try {
+			File jpgFile = new File(path);
+			Metadata metadata = ImageMetadataReader.readMetadata(jpgFile);
+			ExifSubIFDDirectory exif = metadata.getDirectory(ExifSubIFDDirectory.class);
+			Image image = new ImageIcon(path).getImage();
+			imageToExifMap.put(image, exif);
+			createImageTab(image, jpgFile.getName(), checkedTab);
+
+		} catch (IOException | ImageProcessingException e) {
+		}
+
     }
 
     @Override
@@ -243,7 +260,7 @@ public class View implements KeyListener, ActionListener {
             public void run() {
                 List<Image> images = getSelectedImages();
                 if (images.isEmpty() == false) {
-                    Image img = processor.process(new ImageWrapper(images));
+                    Image img = processor.process(new ImageWrapper(images, imageToExifMap));
                     createImageTab(img, processor.getName(), false);
                 }
 
