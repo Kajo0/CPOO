@@ -7,12 +7,10 @@ import java.util.Map;
 
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
-import pl.edu.pw.elka.cpoo.Utilities;
-
 public class ImageWrapper {
 
     protected List<Image> images;
-	private Map<Image, ExifSubIFDDirectory> imageToExifMap;
+    private Map<Image, ExifSubIFDDirectory> imageToExifMap;
 
     public ImageWrapper() {
         images = new ArrayList<>();
@@ -25,11 +23,11 @@ public class ImageWrapper {
     }
 
     public ImageWrapper(List<Image> images, Map<Image, ExifSubIFDDirectory> imageToExifMap) {
-    	this(images);
-    	this.imageToExifMap = imageToExifMap;
-	}
+        this(images);
+        this.imageToExifMap = imageToExifMap;
+    }
 
-	public List<Image> getImages() {
+    public List<Image> getImages() {
         return images;
     }
 
@@ -37,24 +35,12 @@ public class ImageWrapper {
         return images.get(index);
     }
 
-    public Pixel[][] getPixelArray(final int index) {
-        return ImageWrapper.imageToPixelArray(getImage(index));
+    public Map<Image, ExifSubIFDDirectory> getImageToExifMap() {
+        return imageToExifMap;
     }
 
-    public static Pixel[][] imageToPixelArray(final Image img) {
-        return Utilities.createPixelArrayFromImage(img);
+    public void setImageToExifMap(Map<Image, ExifSubIFDDirectory> imageToExifMap) {
+        this.imageToExifMap = imageToExifMap;
     }
-
-    public static Image pixelArryToImage(final Pixel[][] pixelArray) {
-        return Utilities.createImageFromPixels(pixelArray);
-    }
-
-	public Map<Image, ExifSubIFDDirectory> getImageToExifMap() {
-		return imageToExifMap;
-	}
-
-	public void setImageToExifMap(Map<Image, ExifSubIFDDirectory> imageToExifMap) {
-		this.imageToExifMap = imageToExifMap;
-	}
 
 }
