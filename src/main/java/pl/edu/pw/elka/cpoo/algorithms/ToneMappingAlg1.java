@@ -15,6 +15,9 @@ import pl.edu.pw.elka.cpoo.images.MyImage;
 import pl.edu.pw.elka.cpoo.interfaces.HdrProcessor;
 import pl.edu.pw.elka.cpoo.views.TabReinhard;
 
+/**
+ * Reinhard
+ */
 public class ToneMappingAlg1 implements HdrProcessor {
 
     private static final double[] RGB2XYZ = { 0.5141364, 0.3238786, 0.16036376, 0.265068, 0.67023428, 0.06409157, 0.0241188, 0.1228178, 0.84442666 };
@@ -49,7 +52,7 @@ public class ToneMappingAlg1 implements HdrProcessor {
 
     @Override
     public String getName() {
-        return "Tonal Mapping 1";
+        return "Tonal Mapping - Reinhard";
     }
 
     /**

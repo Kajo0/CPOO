@@ -128,8 +128,8 @@ public class View implements KeyListener, ActionListener {
     }
 
     private void initButtons() {
-        alg1Button = addButtonToPanel("Tone Mapping v1", COMMAND_ALG_1, this);
-        alg2Button = addButtonToPanel("Tone Mapping v2", COMMAND_ALG_2, this);
+        alg1Button = addButtonToPanel(new ToneMappingAlg1().getName(), COMMAND_ALG_1, this);
+        alg2Button = addButtonToPanel(new ToneMappingAlg2().getName(), COMMAND_ALG_2, this);
         addButtonToPanel("Zoom in", COMMAND_ZOOM_IN, this);
         addButtonToPanel("Zoom out", COMMAND_ZOOM_OUT, this);
         addButtonToPanel("Reset zoom", COMMAND_RESET_ZOOM, this);
