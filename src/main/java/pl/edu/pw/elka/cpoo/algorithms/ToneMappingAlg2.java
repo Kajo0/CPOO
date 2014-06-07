@@ -22,7 +22,7 @@ public class ToneMappingAlg2 implements HdrProcessor {
     public Image process(final ImageWrapper imageWrapper) {
         List<MyImage> images = new ArrayList<MyImage>();
         for (Image img : imageWrapper.getImages()) {
-            images.add(new MyImage(img));
+            images.add(new MyImage(img, imageWrapper.getImageToExifMap().get(img)));
         }
 
         hdrImage = new HdrImage(images);

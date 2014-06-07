@@ -3,12 +3,16 @@ package pl.edu.pw.elka.cpoo.images;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 import pl.edu.pw.elka.cpoo.Utilities;
 
 public class ImageWrapper {
 
     protected List<Image> images;
+	private Map<Image, ExifSubIFDDirectory> imageToExifMap;
 
     public ImageWrapper() {
         images = new ArrayList<>();
@@ -20,7 +24,12 @@ public class ImageWrapper {
         this.images.addAll(images);
     }
 
-    public List<Image> getImages() {
+    public ImageWrapper(List<Image> images, Map<Image, ExifSubIFDDirectory> imageToExifMap) {
+    	this(images);
+    	this.imageToExifMap = imageToExifMap;
+	}
+
+	public List<Image> getImages() {
         return images;
     }
 
@@ -39,5 +48,13 @@ public class ImageWrapper {
     public static Image pixelArryToImage(final Pixel[][] pixelArray) {
         return Utilities.createImageFromPixels(pixelArray);
     }
+
+	public Map<Image, ExifSubIFDDirectory> getImageToExifMap() {
+		return imageToExifMap;
+	}
+
+	public void setImageToExifMap(Map<Image, ExifSubIFDDirectory> imageToExifMap) {
+		this.imageToExifMap = imageToExifMap;
+	}
 
 }
