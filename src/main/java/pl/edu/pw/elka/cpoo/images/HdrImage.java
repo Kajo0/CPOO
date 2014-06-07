@@ -48,6 +48,7 @@ public class HdrImage {
                 images.get(1).setExposure(0.8081045891269992);
                 images.get(2).setExposure(1.0);
                 images.get(3).setExposure(6.411333121849957);
+                calculateExposureBasedOnImageAverageLuminance();
                 
             }
             // Real
@@ -63,7 +64,22 @@ public class HdrImage {
         }
     }
     
-    private void scaleExposure() {
+    private void calculateExposureBasedOnImageAverageLuminance() {
+    	float[] avgLuminances = new float[images.size()];
+    	float minimalLuminance = Float.MAX_VALUE;
+    	
+    	for(int i = 0 ; i < images.size(); ++i) {
+    		avgLuminances[i] = calculateAverageLuminance(images.get(i));
+    		minimalLuminance = Math.min(minimalLuminance, avgLuminances[i]);
+    	}
+    	
+    	for(float luminance : avgLuminances) {
+    		System.out.println("" + Utilities.log2(luminance/minimalLuminance));
+    	}
+    	
+	}
+
+	private void scaleExposure() {
     	float minExp = Float.MAX_VALUE;
     	for(MyImage img : images) 
     		minExp = (float) Math.min(img.getExposure(), minExp);
