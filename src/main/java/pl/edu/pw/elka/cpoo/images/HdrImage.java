@@ -43,33 +43,39 @@ public class HdrImage {
         // stronki
         try {
             // From tool
-            if (allImagesHasExif(images)) {
+            if (!allImagesHasExif(images)) {
                 images.get(0).setExposure(0.29259689966586955);
                 images.get(1).setExposure(0.8081045891269992);
                 images.get(2).setExposure(1.0);
                 images.get(3).setExposure(6.411333121849957);
-                for(MyImage image : images) {
-                	System.out.println("exposure:" + calculateExposureFromExif(image.getExif()));
-                }
+                
             }
             // Real
             else {
-                images.get(0).setExposure(-4.72);
-                images.get(1).setExposure(-1.82);
-                images.get(2).setExposure(1.51);
-                images.get(3).setExposure(4.09);
+                for(MyImage image : images) 
+                	image.setExposure(calculateExposureFromExif(image.getExif()) + 9.0f);
+                
+                scaleExposure();
+                
             }
         } catch (IndexOutOfBoundsException e) {
             // ignore test
         }
     }
     
-    private float calculateExposureFromExif(ExifSubIFDDirectory exif) {
-    	float fNumber;
+    private void scaleExposure() {
+    	float minExp = Float.MAX_VALUE;
+    	for(MyImage img : images) 
+    		minExp = (float) Math.min(img.getExposure(), minExp);
+    	for(MyImage img : images)
+    		img.setExposure(img.getExposure() + Math.abs(minExp) + 1);
+	}
+
+	private float calculateExposureFromExif(ExifSubIFDDirectory exif) {
 		try {
-			fNumber = exif.getFloat(ExifSubIFDDirectory.TAG_FNUMBER);
+			float fNumber = exif.getFloat(ExifSubIFDDirectory.TAG_FNUMBER);
 			float exposureTime = exif.getFloat(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
-			return Utilities.log2((float) Math.pow(fNumber, 2.0) / exposureTime);
+			return Utilities.log2(exposureTime/(float) Math.pow(fNumber, 2.0));
 		} catch (MetadataException e) {
 		}
 		//protect before divinding by 0
