@@ -55,7 +55,7 @@ public class ToneMappingAlg2 implements HdrProcessor {
         double divider;
 
         // konwersja obrazu hdr do Yxy i wyliczenie maksymalnej, sredniej oraz
-        // úredniej logaryticznej wartoúci luminancji
+        // ≈õredniej logaryticznej warto≈õci luminancji
         for (int pix = 0; pix < rgb.length; pix += 3)
         {           
            final double y = RGB2XYZ[3] * rgb[pix] + RGB2XYZ[4] * rgb[pix + 1] + RGB2XYZ[5] * rgb[pix + 2];
@@ -81,7 +81,7 @@ public class ToneMappingAlg2 implements HdrProcessor {
      * @param scale
      *            wspolczynnik skali
      * @param rgb
-     *            tablica wartoúci obrazu hdr w RGB
+     *            tablica warto≈õci obrazu hdr w RGB
      * @param height
      *            wysokosc obrazy
      * @param width
