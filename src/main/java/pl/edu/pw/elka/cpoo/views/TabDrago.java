@@ -9,12 +9,17 @@ public class TabDrago extends TabHdr {
 
     public TabDrago(HdrImage hdrImage) {
         super(hdrImage);
+        slider.setValue(50);
+        mouseReleased(null);
     }
 
     @Override
     public void mouseReleased(MouseEvent event) {
+        double value = (double) slider.getValue() / 255;
+        slider.setToolTipText(value + "");
+
         ToneMappingAlg2 tm = new ToneMappingAlg2();
-        tm.setBiasP(slider.getValue() * 0.0625);
+        tm.setBiasP(value);
         tabImage.setImage(tm.doTonalMappingAlg2(hdrImage));
     }
 

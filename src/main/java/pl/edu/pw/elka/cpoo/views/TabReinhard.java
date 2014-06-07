@@ -9,13 +9,17 @@ public class TabReinhard extends TabHdr {
 
     public TabReinhard(HdrImage hdrImage) {
         super(hdrImage);
-        slider.setValue(100);
+        slider.setValue(200);
+        mouseReleased(null);
     }
 
     @Override
     public void mouseReleased(MouseEvent event) {
+        double value = (double) slider.getValue() / 127;
+        slider.setToolTipText(value + "");
+
         ToneMappingAlg1 tm = new ToneMappingAlg1();
-        tm.setFactor(slider.getValue() * 0.025);
+        tm.setFactor(value);
         tabImage.setImage(tm.doTonalMappingAlg1(hdrImage));
     }
 

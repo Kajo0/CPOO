@@ -55,5 +55,5 @@ public class TabHdr extends Container implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent event) {
     }
-    
+
 }
