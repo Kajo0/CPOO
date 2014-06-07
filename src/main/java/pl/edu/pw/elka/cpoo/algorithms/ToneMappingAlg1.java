@@ -1,15 +1,19 @@
 package pl.edu.pw.elka.cpoo.algorithms;
 
+import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JFrame;
+
 import pl.edu.pw.elka.cpoo.images.HdrImage;
 import pl.edu.pw.elka.cpoo.images.ImageWrapper;
 import pl.edu.pw.elka.cpoo.images.MyImage;
 import pl.edu.pw.elka.cpoo.interfaces.HdrProcessor;
+import pl.edu.pw.elka.cpoo.views.TabReinhard;
 
 public class ToneMappingAlg1 implements HdrProcessor {
 
@@ -17,6 +21,7 @@ public class ToneMappingAlg1 implements HdrProcessor {
      private static final double[] XYZ2RGB = { 2.5651, -1.1665, -0.3986, -1.0217, 1.9777, 0.0439, 0.0753, -0.2543, 1.1892 };
      
     private HdrImage hdrImage;
+    private double factor = 1;
 
     @Override
     public Image process(final ImageWrapper imageWrapper) {
@@ -28,7 +33,11 @@ public class ToneMappingAlg1 implements HdrProcessor {
         hdrImage = new HdrImage(images);
         hdrImage.process();
 
-        hdrImage.showRawTool();
+        JFrame a = new JFrame("RawReinhardTool");
+        a.setBounds(0, 0, 500, 500);
+        a.setLayout(new BorderLayout());
+        a.add(new TabReinhard(hdrImage), BorderLayout.CENTER);
+        a.setVisible(true);
 
         return doTonalMappingAlg1(hdrImage);
     }
@@ -51,7 +60,7 @@ public class ToneMappingAlg1 implements HdrProcessor {
      *            obraz HDR
      * @return obraz LDR
      */
-    private Image doTonalMappingAlg1(HdrImage hdrImage) {
+    public Image doTonalMappingAlg1(HdrImage hdrImage) {
 
         // dane hdr
         float[] rgb = hdrImage.getHdrData();
@@ -80,7 +89,8 @@ public class ToneMappingAlg1 implements HdrProcessor {
         if (avgLum < 0.1 || avgLum > 0.9)
             avgLum = 0.18f;
 
-        final double scale = avgLum / logAvg;
+        double scale = avgLum / logAvg;
+        scale *= factor;
 
         return scaleLum(scale, rgb, maxLum, hdrImage.getWidth(), hdrImage.getHeight());
     }
@@ -165,4 +175,9 @@ public class ToneMappingAlg1 implements HdrProcessor {
 
         return retImg;
     }
+    
+    public void setFactor(double factor) {
+        this.factor = factor;
+    }
+    
 }

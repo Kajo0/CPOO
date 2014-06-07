@@ -1,15 +1,20 @@
 package pl.edu.pw.elka.cpoo.algorithms;
 
+import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JFrame;
+
 import pl.edu.pw.elka.cpoo.images.HdrImage;
 import pl.edu.pw.elka.cpoo.images.ImageWrapper;
 import pl.edu.pw.elka.cpoo.images.MyImage;
 import pl.edu.pw.elka.cpoo.interfaces.HdrProcessor;
+import pl.edu.pw.elka.cpoo.views.TabDrago;
+import pl.edu.pw.elka.cpoo.views.TabHdr;
 
 public class ToneMappingAlg2 implements HdrProcessor {
 
@@ -17,6 +22,8 @@ public class ToneMappingAlg2 implements HdrProcessor {
     private static final double[] XYZ2RGB = { 2.5651, -1.1665, -0.3986, -1.0217, 1.9777, 0.0439, 0.0753, -0.2543, 1.1892 };
       
     private HdrImage hdrImage;
+    
+    private double biasP = Math.log(1) / -0.693147;
 
     @Override
     public Image process(final ImageWrapper imageWrapper) {
@@ -27,6 +34,12 @@ public class ToneMappingAlg2 implements HdrProcessor {
 
         hdrImage = new HdrImage(images);
         hdrImage.process();
+
+        JFrame a = new JFrame("RawDragoTool");
+        a.setBounds(0, 0, 500, 500);
+        a.setLayout(new BorderLayout());
+        a.add(new TabDrago(hdrImage), BorderLayout.CENTER);
+        a.setVisible(true);
 
         return doTonalMappingAlg2(hdrImage);
     }
@@ -41,7 +54,7 @@ public class ToneMappingAlg2 implements HdrProcessor {
         return "Tonal Mapping 2";
     }
     
-    private Image doTonalMappingAlg2(HdrImage hdrImage) {
+    public Image doTonalMappingAlg2(HdrImage hdrImage) {
 
         // dane hdr
         float[] rgb = hdrImage.getHdrData();
@@ -69,8 +82,6 @@ public class ToneMappingAlg2 implements HdrProcessor {
        
         // Set divider
         divider = Math.log10(maxLuminance + 1.0);
-
-        final double biasP = Math.log(1) / -0.693147;
 
         return scaleLum(biasP, maxLuminance, avgLuminance, divider, rgb, hdrImage.getWidth(), hdrImage.getHeight());
     }
@@ -137,4 +148,9 @@ public class ToneMappingAlg2 implements HdrProcessor {
 
         return retImg;
     }
+    
+    public void setBiasP(double biasP) {
+        this.biasP = biasP;
+    }
+
 }

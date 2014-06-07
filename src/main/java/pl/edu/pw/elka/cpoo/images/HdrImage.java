@@ -34,36 +34,20 @@ public class HdrImage {
         height = img.getHeight();
     }
 
-    // TODO calculate exposure for images
     private void calculateExposures() {
-        // TODO EV calculation/extraction
-        // It has to be relative exposure -> Most similar to EV = 0 should be 1
-        // and more dark images lower, brighter -> higher -|| nie wiem jak to
-        // ogarnac, to sa wartosci z toola co liczyl grubo, my uzyjemy alg ze
-        // stronki
-        try {
-            // From tool
-            if (!allImagesHasExif(images)) {
-                images.get(0).setExposure(0.29259689966586955);
-                images.get(1).setExposure(0.8081045891269992);
-                images.get(2).setExposure(1.0);
-                images.get(3).setExposure(6.411333121849957);
-                calculateExposureBasedOnImageAverageLuminance();
-                
-            }
-            // Real
-            else {
-                for(MyImage image : images) 
-                	image.setExposure(calculateExposureFromExif(image.getExif()) + 9.0f);
-                
-                scaleExposure();
-                
-            }
-        } catch (IndexOutOfBoundsException e) {
-            // ignore test
+        // From tool
+        if (!allImagesHasExif(images)) {
+            calculateExposureBasedOnImageAverageLuminance();
+        }
+        // Real
+        else {
+            for (MyImage image : images)
+                image.setExposure(calculateExposureFromExif(image.getExif()) + 9.0f);
+
+            scaleExposure();
         }
     }
-    
+
     private void calculateExposureBasedOnImageAverageLuminance() {
     	float[] avgLuminances = new float[images.size()];
     	float minimalLuminance = Float.MAX_VALUE;

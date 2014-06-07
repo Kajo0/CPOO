@@ -32,11 +32,7 @@ import pl.edu.pw.elka.cpoo.views.TabImage;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
-import com.drew.metadata.Tag;
-import com.drew.metadata.exif.ExifSubIFDDescriptor;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 
 public class View implements KeyListener, ActionListener {
@@ -157,22 +153,19 @@ public class View implements KeyListener, ActionListener {
         tabButton.setChecked(checkedTab);
         tabPane.setTabComponentAt(tabIndex, tabButton);
         tabPane.setSelectedIndex(tabIndex);
-        
     }
 
     private void createImageTab(final String path, boolean checkedTab) {
-   
-     	try {
-			File jpgFile = new File(path);
-			Metadata metadata = ImageMetadataReader.readMetadata(jpgFile);
-			ExifSubIFDDirectory exif = metadata.getDirectory(ExifSubIFDDirectory.class);
-			Image image = new ImageIcon(path).getImage();
-			imageToExifMap.put(image, exif);
-			createImageTab(image, jpgFile.getName(), checkedTab);
+        try {
+            File jpgFile = new File(path);
+            Metadata metadata = ImageMetadataReader.readMetadata(jpgFile);
+            ExifSubIFDDirectory exif = metadata.getDirectory(ExifSubIFDDirectory.class);
+            Image image = new ImageIcon(path).getImage();
+            imageToExifMap.put(image, exif);
+            createImageTab(image, jpgFile.getName(), checkedTab);
 
-		} catch (IOException | ImageProcessingException e) {
-		}
-
+        } catch (IOException | ImageProcessingException e) {
+        }
     }
 
     @Override
@@ -253,6 +246,7 @@ public class View implements KeyListener, ActionListener {
             return;
 
         alg1Button.setEnabled(false);
+        alg2Button.setEnabled(false);
 
         new Thread(new Runnable() {
 
@@ -265,6 +259,7 @@ public class View implements KeyListener, ActionListener {
                 }
 
                 alg1Button.setEnabled(true);
+                alg2Button.setEnabled(true);
             }
         }).start();
     }

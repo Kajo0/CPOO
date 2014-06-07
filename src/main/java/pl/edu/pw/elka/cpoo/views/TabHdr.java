@@ -9,7 +9,7 @@ import javax.swing.JSlider;
 
 import pl.edu.pw.elka.cpoo.images.HdrImage;
 
-public class TabHdr extends Container {
+public class TabHdr extends Container implements MouseListener {
 
     protected HdrImage hdrImage;
 
@@ -29,32 +29,31 @@ public class TabHdr extends Container {
         setLayout(new BorderLayout());
 
         slider = new JSlider(0, 255, 16);
-        slider.addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseReleased(MouseEvent event) {
-                tabImage.setImage(hdrImage.getExposedImage(slider.getValue() * 0.0625));
-            }
-
-            @Override
-            public void mousePressed(MouseEvent event) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent event) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent event) {
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent event) {
-            }
-        });
+        slider.addMouseListener(this);
 
         add(slider, BorderLayout.NORTH);
         add(tabImage, BorderLayout.CENTER);
     }
 
+    @Override
+    public void mouseReleased(MouseEvent event) {
+        tabImage.setImage(hdrImage.getExposedImage(slider.getValue() * 0.0625));
+    }
+
+    @Override
+    public void mousePressed(MouseEvent event) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent event) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent event) {
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent event) {
+    }
+    
 }
