@@ -9,7 +9,7 @@ public class TabDrago extends TabHdr {
 
     public TabDrago(HdrImage hdrImage) {
         super(hdrImage);
-        slider.setValue(50);
+        slider.setValue(200);
         mouseReleased(null);
     }
 

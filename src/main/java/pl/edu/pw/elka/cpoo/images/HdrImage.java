@@ -149,8 +149,8 @@ public class HdrImage {
         for (int i = 0; i < width * height; i++) {
             isPixelSet = false;
             for (MyImage img : images) {
-                double relevance = 1 - ((Math.abs(img.getLuminance(i) - 127) + 0.5) / 127);
-                if (relevance > 0.03) {
+                double relevance = 1 - ((Math.abs(img.getLuminance(i) - 127) + 0.5) / 255);
+                if (relevance > 0.05) {
                     isPixelSet = true;
                     color = img.getBufferedImage().getRGB(i % width, i / width);
                     red = (color & 0x00ff0000) >> 16;
